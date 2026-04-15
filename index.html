@@ -3,22 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Dungeon Realms | Выбери свой путь</title>
+    <title>Dungeon Realms: Легенды Этерны | RPG с выбором класса</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            user-select: none;
         }
 
         body {
             min-height: 100vh;
-            background: linear-gradient(135deg, #0a0f1e 0%, #0c1222 100%);
-            font-family: 'Segoe UI', 'Courier New', monospace;
+            background: linear-gradient(135deg, #0a0a1a 0%, #0f0f2a 100%);
+            font-family: 'Segoe UI', 'Courier New', 'Monaco', monospace;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 20px;
+            position: relative;
         }
 
         /* ЭКРАН ВЫБОРА КЛАССА */
@@ -28,208 +30,240 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(ellipse at center, #1a1f2e, #05080f);
+            background: radial-gradient(ellipse at center, #1a1a2e, #0a0a15);
             z-index: 1000;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(12px);
             transition: 0.5s;
         }
 
         .class-selection-title {
-            font-size: 48px;
-            color: #ffd966;
-            text-shadow: 0 0 20px #ff9900;
-            margin-bottom: 40px;
+            font-size: 52px;
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 30px rgba(255,215,0,0.3);
+            margin-bottom: 50px;
             font-weight: bold;
+            letter-spacing: 3px;
         }
 
         .class-cards {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 25px;
-            max-width: 1200px;
+            gap: 30px;
+            max-width: 1300px;
             padding: 20px;
         }
 
         .class-card {
-            background: linear-gradient(145deg, #232a3f, #141a2a);
-            border-radius: 32px;
-            padding: 25px;
-            width: 200px;
+            background: linear-gradient(145deg, #2a2a3e, #1a1a2a);
+            border-radius: 40px;
+            padding: 30px 25px;
+            width: 220px;
             cursor: pointer;
             text-align: center;
-            transition: 0.3s;
-            border: 2px solid #4a3a2a;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid #ffd70033;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .class-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,215,0,0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .class-card:hover::before {
+            left: 100%;
         }
 
         .class-card:hover {
-            transform: translateY(-10px);
-            border-color: #ffcc44;
-            box-shadow: 0 10px 30px rgba(255,200,0,0.3);
+            transform: translateY(-10px) scale(1.02);
+            border-color: #ffd700;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 20px rgba(255,215,0,0.3);
         }
 
         .class-icon {
-            font-size: 64px;
+            font-size: 70px;
             margin-bottom: 15px;
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5));
         }
 
         .class-card h3 {
-            color: #ffdd99;
-            font-size: 24px;
+            color: #ffd966;
+            font-size: 26px;
             margin-bottom: 10px;
         }
 
         .class-card p {
-            color: #aaa;
-            font-size: 12px;
+            color: #aaaacc;
+            font-size: 13px;
+            line-height: 1.4;
         }
 
-        /* ИГРОВОЙ ИНТЕРФЕЙС */
+        /* ОСНОВНАЯ ИГРА */
         .game-container {
             display: none;
             width: 100%;
-            max-width: 1400px;
-            background: rgba(0,0,0,0.6);
-            border-radius: 32px;
-            padding: 20px;
-            backdrop-filter: blur(5px);
+            max-width: 1500px;
+            background: rgba(5, 8, 20, 0.85);
+            border-radius: 40px;
+            padding: 25px;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,215,0,0.3);
         }
 
-        /* Верхняя панель статистики */
-        .stats-bar {
+        /* Статистика */
+        .stats-panel {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(5, 1fr);
             gap: 15px;
-            background: #03060cee;
-            padding: 15px;
-            border-radius: 28px;
-            margin-bottom: 20px;
-        }
-
-        .stat-card {
-            background: #0f1726;
-            padding: 10px;
-            border-radius: 20px;
-            text-align: center;
-        }
-
-        /* Карта подземелья */
-        .dungeon-map {
-            background: #1a1525;
-            border-radius: 28px;
+            background: linear-gradient(135deg, #0a0a1e, #0f0f2a);
             padding: 20px;
-            margin-bottom: 20px;
-            position: relative;
+            border-radius: 30px;
+            margin-bottom: 25px;
+            border: 1px solid #ffd70033;
+        }
+
+        .stat-item {
+            text-align: center;
+            background: rgba(0,0,0,0.5);
+            padding: 12px;
+            border-radius: 25px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #aaaacc;
+            letter-spacing: 1px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ffd966;
+        }
+
+        /* КАРТА ПОДЗЕМЕЛЬЯ */
+        .dungeon-map {
+            background: linear-gradient(145deg, #0f0f1a, #07070f);
+            border-radius: 35px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border: 1px solid #ffd70044;
+        }
+
+        .map-title {
+            color: #ffd966;
+            margin-bottom: 15px;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .map-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
             gap: 12px;
-            background: #0a0a1a;
+            background: rgba(0,0,0,0.4);
             padding: 20px;
-            border-radius: 20px;
+            border-radius: 25px;
         }
 
         .map-cell {
             aspect-ratio: 1;
-            background: #2a1f2e;
-            border-radius: 16px;
+            background: linear-gradient(145deg, #2a2a3a, #1a1a2a);
+            border-radius: 18px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: 0.2s;
-            border: 2px solid #4a3a4e;
-            font-size: 28px;
+            transition: all 0.2s;
+            border: 2px solid #4a4a6a;
+            font-size: 32px;
             position: relative;
+            font-weight: bold;
         }
 
-        .map-cell.visited {
-            background: #3a2a3e;
-            border-color: #d4af37;
+        .map-cell:hover {
+            transform: scale(1.02);
+            border-color: #ffd700;
         }
 
         .map-cell.current {
-            background: #5a4a3e;
-            border: 3px solid #ffcc44;
-            box-shadow: 0 0 15px gold;
+            background: linear-gradient(145deg, #3a3a5a, #2a2a4a);
+            border: 3px solid #ffd700;
+            box-shadow: 0 0 20px rgba(255,215,0,0.5);
         }
 
         .map-cell.enemy {
-            background: #6a2a2a;
+            background: linear-gradient(145deg, #5a2a2a, #4a1a1a);
             border-color: #ff4444;
         }
 
         .map-cell.chest {
-            background: #2a5a3a;
+            background: linear-gradient(145deg, #2a5a3a, #1a4a2a);
             border-color: #44ff88;
         }
 
-        /* Игровая арена */
+        .map-cell.visited {
+            background: linear-gradient(145deg, #2a2a4a, #1a1a3a);
+            border-color: #ffd70066;
+        }
+
+        /* АРЕНА БИТВЫ */
         .battle-arena {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            background: #05080fc9;
-            border-radius: 32px;
-            padding: 25px;
+            gap: 40px;
+            background: linear-gradient(135deg, #0a0a1a, #0d0d20);
+            border-radius: 35px;
+            padding: 30px;
             margin-bottom: 20px;
-        }
-
-        .character-area {
-            text-align: center;
             position: relative;
         }
 
-        .character-sprite {
-            font-size: 80px;
-            filter: drop-shadow(0 0 15px rgba(255,200,0,0.5));
+        .fighter-card {
+            text-align: center;
+            background: rgba(0,0,0,0.4);
+            border-radius: 30px;
+            padding: 25px;
+            transition: 0.2s;
+        }
+
+        .fighter-sprite {
+            font-size: 100px;
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));
             transition: 0.1s;
             display: inline-block;
         }
 
-        .summon-sprite {
-            font-size: 50px;
-            position: absolute;
-            bottom: -30px;
-            right: 20px;
-            animation: float 2s infinite;
+        .fighter-name {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ffd966;
+            margin: 15px 0 10px;
         }
 
-        .magic-ball {
-            position: absolute;
-            font-size: 35px;
-            pointer-events: none;
-            transition: all 0.3s ease;
-            z-index: 100;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-        }
-
-        @keyframes attackAnim {
-            0% { transform: translateX(0); }
-            50% { transform: translateX(100px); }
-            100% { transform: translateX(0); }
-        }
-
-        .attacking {
-            animation: attackAnim 0.3s ease;
-        }
-
-        .health-bar {
+        .health-container {
             width: 100%;
-            height: 20px;
-            background: #330000;
-            border-radius: 20px;
+            height: 25px;
+            background: #2a0a0a;
+            border-radius: 30px;
             overflow: hidden;
             margin: 10px 0;
         }
@@ -237,59 +271,155 @@
         .health-fill {
             height: 100%;
             background: linear-gradient(90deg, #ff4444, #ff8844);
-            transition: width 0.3s;
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .mana-container {
             width: 100%;
+            height: 15px;
+            background: #0a2a3a;
+            border-radius: 30px;
+            overflow: hidden;
+            margin: 8px 0;
         }
 
+        .mana-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4488ff, #66aaff);
+            transition: width 0.3s;
+        }
+
+        /* Лог боя */
         .combat-log {
-            background: #000000aa;
-            border-radius: 20px;
+            background: rgba(0,0,0,0.7);
+            border-radius: 25px;
             padding: 15px;
-            height: 150px;
+            height: 160px;
             overflow-y: auto;
+            font-family: monospace;
             font-size: 13px;
+            margin-bottom: 15px;
         }
 
+        .log-entry {
+            padding: 6px 12px;
+            margin: 4px 0;
+            border-left: 3px solid #ffd700;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+        }
+
+        /* Кнопки действий */
         .action-buttons {
             display: flex;
-            gap: 12px;
-            margin-top: 15px;
+            gap: 15px;
             flex-wrap: wrap;
         }
 
         .game-btn {
-            background: #2a2a3e;
+            background: linear-gradient(145deg, #2a2a4a, #1a1a3a);
             border: none;
-            padding: 12px 24px;
-            border-radius: 40px;
+            padding: 14px 28px;
+            border-radius: 50px;
             font-weight: bold;
+            font-size: 16px;
             cursor: pointer;
             color: #ffdd99;
             transition: 0.1s;
+            flex: 1;
+            min-width: 130px;
+            border: 1px solid #ffd70066;
         }
 
-        .game-btn:active { transform: scale(0.95); }
-        .game-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .game-btn:active {
+            transform: scale(0.96);
+        }
 
-        .inventory {
-            background: #03060cee;
-            border-radius: 20px;
+        .game-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .attack-btn { background: linear-gradient(145deg, #8b3a2a, #6a2a1a); }
+        .skill-btn { background: linear-gradient(145deg, #2a4a7a, #1a3a6a); }
+        .heal-btn { background: linear-gradient(145deg, #2a6a4a, #1a5a3a); }
+
+        /* Инвентарь */
+        .inventory-panel {
+            background: rgba(0,0,0,0.5);
+            border-radius: 25px;
             padding: 15px;
             margin-top: 15px;
         }
 
-        .weapon-slot {
+        .weapon-item {
             display: inline-block;
-            background: #1a1525;
-            padding: 8px 16px;
-            border-radius: 20px;
+            background: linear-gradient(145deg, #2a2a4a, #1a1a3a);
+            padding: 8px 18px;
+            border-radius: 30px;
             margin: 5px;
+            font-size: 14px;
+            border: 1px solid #ffd70066;
+        }
+
+        /* Анимации */
+        @keyframes attackAnim {
+            0% { transform: translateX(0); }
+            30% { transform: translateX(-20px); }
+            70% { transform: translateX(20px); }
+            100% { transform: translateX(0); }
+        }
+
+        @keyframes spellFly {
+            0% { transform: translate(0, 0) scale(1); opacity: 1; }
+            100% { transform: translate(150px, -50px) scale(1.5); opacity: 0; }
         }
 
         @keyframes shake {
-            0%,100%{ transform: translateX(0); }
-            25%{ transform: translateX(-5px); }
-            75%{ transform: translateX(5px); }
+            0%,100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+
+        .attacking {
+            animation: attackAnim 0.3s ease;
+        }
+
+        .enemy-hit {
+            animation: shake 0.3s ease;
+        }
+
+        .spell-effect {
+            position: fixed;
+            font-size: 40px;
+            pointer-events: none;
+            z-index: 1000;
+            animation: spellFly 0.4s forwards;
+        }
+
+        .summon-creature {
+            position: absolute;
+            bottom: -20px;
+            right: -20px;
+            font-size: 55px;
+            filter: drop-shadow(0 0 10px #00ff88);
+            animation: float 2s infinite;
+        }
+
+        @keyframes float {
+            0%,100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes fadeOut {
+            to { opacity: 0; transform: scale(0); }
         }
     </style>
 </head>
@@ -300,149 +430,148 @@
     <div class="class-selection-title">⚔️ ВЫБЕРИ СВОЮ СУДЬБУ ⚔️</div>
     <div class="class-cards">
         <div class="class-card" data-class="warrior">
-            <div class="class-icon">⚔️</div>
-            <h3>ВОИН</h3>
-            <p>Сила + броня</p>
+            <div class="class-icon">⚔️🗡️</div>
+            <h3>ПАЛАДИН СВЕТА</h3>
+            <p>Непробиваемая броня • Мощные удары • Защитник</p>
         </div>
         <div class="class-card" data-class="mage">
-            <div class="class-icon">🔮</div>
-            <h3>МАГ</h3>
-            <p>Магия + огненные шары</p>
+            <div class="class-icon">🔮✨</div>
+            <h3>АРХИМАГ</h3>
+            <p>Огненные шары • Ледяные стрелы • Руны</p>
         </div>
         <div class="class-card" data-class="rogue">
-            <div class="class-icon">🗡️</div>
-            <h3>РАЗБОЙНИК</h3>
-            <p>Крит + скорость</p>
+            <div class="class-icon">🗡️🌙</div>
+            <h3>НОЧНОЙ СТРАЖ</h3>
+            <p>Скрытность • Критические удары • Яды</p>
         </div>
         <div class="class-card" data-class="archer">
-            <div class="class-icon">🏹</div>
-            <h3>ЛУЧНИК</h3>
-            <p>Дальний бой</p>
+            <div class="class-icon">🏹🍃</div>
+            <h3>ЛЕСНОЙ ЛУЧНИК</h3>
+            <p>Дальний бой • Ловушка • Соколиный глаз</p>
         </div>
         <div class="class-card" data-class="summoner">
-            <div class="class-icon">🐉</div>
-            <h3>ПРИЗЫВАТЕЛЬ</h3>
-            <p>Духи-союзники</p>
+            <div class="class-icon">🐉🔗</div>
+            <h3>ПОВЕЛИТЕЛЬ ДУХОВ</h3>
+            <p>Призыв дракона • Духи-хранители • Тотем</p>
         </div>
     </div>
 </div>
 
 <!-- ОСНОВНАЯ ИГРА -->
 <div class="game-container" id="gameContainer">
-    <div class="stats-bar">
-        <div class="stat-card">❤️ Здоровье: <span id="hpStat">100</span>/<span id="maxHpStat">100</span></div>
-        <div class="stat-card">🌀 Мана: <span id="manaStat">50</span>/<span id="maxManaStat">50</span></div>
-        <div class="stat-card">⚔️ Урон: <span id="damageStat">15</span></div>
-        <div class="stat-card">🗡️ Оружие: <span id="weaponName">Прочный меч</span></div>
+    <div class="stats-panel">
+        <div class="stat-item"><div class="stat-label">❤️ ЗДОРОВЬЕ</div><div class="stat-value"><span id="hpVal">0</span>/<span id="maxHpVal">0</span></div></div>
+        <div class="stat-item"><div class="stat-label">🌀 МАНА</div><div class="stat-value"><span id="manaVal">0</span>/<span id="maxManaVal">0</span></div></div>
+        <div class="stat-item"><div class="stat-label">⚔️ СИЛА</div><div class="stat-value"><span id="strVal">0</span></div></div>
+        <div class="stat-item"><div class="stat-label">🎯 ЛОВКОСТЬ</div><div class="stat-value"><span id="dexVal">0</span></div></div>
+        <div class="stat-item"><div class="stat-label">🗡️ ОРУЖИЕ</div><div class="stat-value" style="font-size:14px;"><span id="weaponName">-</span></div></div>
     </div>
 
     <div class="dungeon-map">
-        <h3 style="color:#ffcc66; margin-bottom:15px;">🗺️ ПОДЗЕМЕЛЬЕ (нажми на клетку чтобы идти)</h3>
+        <div class="map-title">🗺️ ПОДЗЕМЕЛЬЕ ДРЕВНИХ</div>
         <div class="map-grid" id="mapGrid"></div>
     </div>
 
-    <div class="battle-arena">
-        <div class="character-area">
-            <div class="character-sprite" id="playerSprite">⚔️</div>
-            <div id="summonArea"></div>
-            <div id="magicArea"></div>
-            <div class="health-bar"><div class="health-fill" id="playerHealthFill" style="width:100%"></div></div>
-            <div id="playerName" style="font-weight:bold; margin-top:5px;">ВОИН</div>
+    <div class="battle-arena" id="battleArena">
+        <div class="fighter-card">
+            <div class="fighter-sprite" id="playerSprite">⚔️</div>
+            <div class="fighter-name" id="playerClassName">ПАЛАДИН</div>
+            <div class="health-container"><div class="health-fill" id="playerHealthFill" style="width:100%"></div></div>
+            <div class="mana-container"><div class="mana-fill" id="playerManaFill" style="width:100%"></div></div>
+            <div id="summonContainer"></div>
         </div>
-        <div class="character-area">
-            <div class="character-sprite" id="enemySprite">👾</div>
-            <div class="health-bar"><div class="health-fill" id="enemyHealthFill" style="width:100%"></div></div>
-            <div id="enemyName" style="font-weight:bold;">Враг</div>
-            <div id="enemyHpText" style="font-size:12px;">100/100</div>
+        <div class="fighter-card" id="enemyCard">
+            <div class="fighter-sprite" id="enemySprite">👾</div>
+            <div class="fighter-name" id="enemyName">ВРАГ</div>
+            <div class="health-container"><div class="health-fill" id="enemyHealthFill" style="width:100%"></div></div>
+            <div id="enemyHpText" style="font-size:12px; color:#aaa;">0/0</div>
         </div>
     </div>
 
     <div class="combat-log" id="combatLog">
-        <div>⚔️ Выбери класс и исследуй подземелье!</div>
+        <div class="log-entry">✨ Добро пожаловать в Легенды Этерны!</div>
+        <div class="log-entry">⚔️ Выбери класс и исследуй подземелье</div>
     </div>
 
     <div class="action-buttons">
-        <button class="game-btn" id="attackBtn">⚡ АТАКОВАТЬ</button>
-        <button class="game-btn" id="skillBtn">✨ ОСОБОЕ УМЕНИЕ</button>
-        <button class="game-btn" id="healBtn">💚 ЛЕЧЕНИЕ (15 маны)</button>
+        <button class="game-btn attack-btn" id="attackBtn">⚡ РАЗЯЩИЙ УДАР</button>
+        <button class="game-btn skill-btn" id="skillBtn">✨ КЛАССОВАЯ СПОСОБНОСТЬ</button>
+        <button class="game-btn heal-btn" id="healBtn">💚 СВЯТОЕ СЛОВО (20 маны)</button>
     </div>
 
-    <div class="inventory">
-        <strong>🎒 Найденное оружие:</strong>
+    <div class="inventory-panel">
+        <strong>🏆 НАЙДЕННОЕ ОРУЖИЕ:</strong>
         <div id="weaponInventory"></div>
     </div>
 </div>
 
 <script>
-    // ********** ДАННЫЕ ИГРЫ **********
-    let currentClass = null;
+    // ************* УНИКАЛЬНЫЕ ПЕРСОНАЖИ И ВРАГИ *************
+    const CLASSES = {
+        warrior: { name: "ПАЛАДИН СВЕТА", sprite: "⚔️🛡️", hp: 160, mana: 50, str: 22, int: 8, dex: 12, 
+                   skill: "⚡ КАРАЮЩИЙ МОЛОТ", skillCost: 18, skillDmg: (p) => Math.floor(p.str * 2.6 + 25) },
+        mage: { name: "АРХИМАГ", sprite: "🔮🧙", hp: 90, mana: 140, str: 8, int: 25, dex: 10,
+                skill: "🔥 ОГНЕННЫЙ ВИХРЬ", skillCost: 22, skillDmg: (p) => Math.floor(p.int * 3.4 + 20) },
+        rogue: { name: "НОЧНОЙ СТРАЖ", sprite: "🗡️🌑", hp: 110, mana: 70, str: 15, int: 9, dex: 24,
+                 skill: "💀 ТАНЕЦ ТЕНЕЙ", skillCost: 16, skillDmg: (p) => Math.floor(p.dex * 2.9 + p.str * 1.3) },
+        archer: { name: "ЛЕСНОЙ ЛУЧНИК", sprite: "🏹🍃", hp: 105, mana: 80, str: 13, int: 11, dex: 23,
+                  skill: "🌪️ ВЕТРЕНАЯ СТРЕЛА", skillCost: 17, skillDmg: (p) => Math.floor(p.dex * 2.7 + 22) },
+        summoner: { name: "ПОВЕЛИТЕЛЬ ДУХОВ", sprite: "🐉🔗", hp: 100, mana: 120, str: 10, int: 22, dex: 12,
+                    skill: "🐉 ПРИЗЫВ ДРЕВНЕГО", skillCost: 25, skillDmg: (p) => Math.floor(p.int * 2.5 + 18) }
+    };
+
+    // УНИКАЛЬНЫЕ ВРАГИ (без эмодзи, с именами)
+    const ENEMIES = [
+        { name: "Тёмный рыцарь", sprite: "⚔️💀", hp: 75, dmg: 14, exp: 65, desc: "Падший воин в чёрной броне" },
+        { name: "Лесной тролль", sprite: "🌳👹", hp: 110, dmg: 18, exp: 90, desc: "Огромное каменное создание" },
+        { name: "Призрачный маг", sprite: "👻🔮", hp: 65, dmg: 22, exp: 85, desc: "Дух древнего чародея" },
+        { name: "Кровавый палач", sprite: "🪓🩸", hp: 130, dmg: 25, exp: 130, desc: "Безжалостный убийца" },
+        { name: "Ледяной дракон", sprite: "🐉❄️", hp: 180, dmg: 32, exp: 200, desc: "Дыхание вечной мерзлоты" },
+        { name: "Хранитель склепа", sprite: "⚰️👑", hp: 150, dmg: 28, exp: 170, desc: "Древний страж гробницы" },
+        { name: "Ночная ведьма", sprite: "🧙🌙", hp: 95, dmg: 26, exp: 140, desc: "Колдунья из тёмного леса" },
+        { name: "Каменный голем", sprite: "🗿💪", hp: 200, dmg: 35, exp: 250, desc: "Неуязвимая каменная громада" }
+    ];
+
+    // ОРУЖИЕ
+    const WEAPONS = [
+        { name: "Святой меч Арендил", bonus: 12, found: false, desc: "⚔️ +12 к силе" },
+        { name: "Посох Вечного Пламени", bonus: 15, found: false, desc: "🔥 +15 к интеллекту" },
+        { name: "Клинок Лунной Тени", bonus: 10, found: false, desc: "🌙 +10 к ловкости" },
+        { name: "Лук Эльфийского Леса", bonus: 11, found: false, desc: "🏹 +11 ко всем статам" },
+        { name: "Амулет Духов", bonus: 8, found: false, desc: "🐉 +8 к призыву" }
+    ];
+
     let player = {
-        class: null,
-        hp: 100, maxHp: 100,
-        mana: 50, maxMana: 50,
-        strength: 15,
-        intellect: 10,
-        dexterity: 12,
-        weapon: { name: "Прочный меч", damageBonus: 0 },
-        weaponsFound: [],
-        level: 1,
-        xp: 0
+        classId: null, hp: 0, maxHp: 0, mana: 0, maxMana: 0,
+        str: 0, int: 0, dex: 0, weapon: null, weaponsFound: [],
+        summonActive: false, summonPower: 0
     };
 
     let currentEnemy = null;
     let mapData = [];
     let currentPos = { x: 2, y: 2 };
-    let summonActive = false;
-    let summonDamage = 0;
-
-    // Данные классов
-    const CLASSES = {
-        warrior: { name: "ВОИН", sprite: "⚔️", hp: 140, mana: 40, str: 20, int: 6, dex: 12, skill: "💢 ЯРОСТНЫЙ УДАР", skillDamage: (p) => Math.floor(p.strength * 2.5 + 20) },
-        mage: { name: "МАГ", sprite: "🔮", hp: 85, mana: 120, str: 8, int: 22, dex: 10, skill: "🔥 ОГНЕННЫЙ ШАР", skillDamage: (p) => Math.floor(p.intellect * 3.2 + 15) },
-        rogue: { name: "РАЗБОЙНИК", sprite: "🗡️", hp: 105, mana: 60, str: 14, int: 8, dex: 22, skill: "💀 ТАНЕЦ КЛИНКОВ", skillDamage: (p) => Math.floor(p.dexterity * 2.8 + p.strength * 1.2) },
-        archer: { name: "ЛУЧНИК", sprite: "🏹", hp: 100, mana: 70, str: 12, int: 10, dex: 20, skill: "🌪️ ПРОНЗАЮЩАЯ СТРЕЛА", skillDamage: (p) => Math.floor(p.dexterity * 2.5 + 18) },
-        summoner: { name: "ПРИЗЫВАТЕЛЬ", sprite: "🐉", hp: 95, mana: 100, str: 10, int: 20, dex: 10, skill: "🐺 ПРИЗОВАТЬ ДУХА", skillDamage: (p) => Math.floor(p.intellect * 2.2 + 12) }
-    };
-
-    // Оружие в подземелье
-    const WEAPONS = [
-        { name: "Меч света", damageBonus: 8, found: false },
-        { name: "Посох магии", damageBonus: 10, found: false },
-        { name: "Клинок теней", damageBonus: 7, found: false },
-        { name: "Лук бури", damageBonus: 9, found: false },
-        { name: "Жезл призыва", damageBonus: 6, found: false },
-        { name: "Древний артефакт", damageBonus: 15, found: false }
-    ];
-
-    // Враги
-    const ENEMIES = [
-        { name: "Слизень", sprite: "🟢", hp: 45, damage: 8, exp: 40 },
-        { name: "Гоблин", sprite: "👺", hp: 60, damage: 12, exp: 60 },
-        { name: "Скелет", sprite: "💀", hp: 75, damage: 15, exp: 85 },
-        { name: "Орк", sprite: "👹", hp: 100, damage: 20, exp: 120 },
-        { name: "Тёмный маг", sprite: "🧙", hp: 80, damage: 22, exp: 140 },
-        { name: "Дракончик", sprite: "🐉", hp: 130, damage: 28, exp: 200 }
-    ];
 
     function generateMap() {
         let map = [];
         for(let i=0; i<5; i++) {
             map[i] = [];
             for(let j=0; j<5; j++) {
-                let type = Math.random() < 0.3 ? "enemy" : (Math.random() < 0.15 ? "chest" : "empty");
+                let r = Math.random();
+                let type = "empty";
+                if(r < 0.35) type = "enemy";
+                else if(r < 0.5) type = "chest";
                 if(i===2 && j===2) type = "start";
-                map[i][j] = { type: type, visited: false, enemy: null, weapon: null };
+                map[i][j] = { type, visited: (type==="start"), enemy: null, weapon: null };
                 if(type === "enemy") {
-                    let enemyTemplate = {...ENEMIES[Math.floor(Math.random()*ENEMIES.length)]};
-                    map[i][j].enemy = { ...enemyTemplate, hp: enemyTemplate.hp, maxHp: enemyTemplate.hp };
+                    let e = {...ENEMIES[Math.floor(Math.random()*ENEMIES.length)]};
+                    map[i][j].enemy = { ...e, hp: e.hp, maxHp: e.hp };
                 }
                 if(type === "chest") {
-                    let available = WEAPONS.filter(w => !w.found);
-                    if(available.length) map[i][j].weapon = available[Math.floor(Math.random()*available.length)];
+                    let avail = WEAPONS.filter(w => !w.found);
+                    if(avail.length) map[i][j].weapon = avail[Math.floor(Math.random()*avail.length)];
                 }
             }
         }
-        map[2][2].visited = true;
         return map;
     }
 
@@ -462,10 +591,10 @@
                 let icon = '';
                 if(cell.type === 'enemy') icon = '👾';
                 else if(cell.type === 'chest') icon = '🎁';
-                else if(cell.visited) icon = '👣';
-                else icon = '⬛';
-                if(currentPos.x === i && currentPos.y === j) icon = player.classData.sprite;
-                div.innerHTML = `<div style="font-size:28px;">${icon}</div><div style="font-size:10px;">${cell.visited ? '✓' : '?'}</div>`;
+                else if(cell.visited) icon = '✦';
+                else icon = '◼';
+                if(currentPos.x === i && currentPos.y === j) icon = player.classData?.sprite || '⚔️';
+                div.innerHTML = `<div style="font-size:32px;">${icon}</div><div style="font-size:10px;">${cell.visited ? '⚔️' : '❓'}</div>`;
                 div.onclick = () => moveTo(i,j);
                 grid.appendChild(div);
             }
@@ -474,208 +603,215 @@
 
     function moveTo(x,y) {
         if(Math.abs(x-currentPos.x) + Math.abs(y-currentPos.y) !== 1) {
-            addLog("❌ Можно ходить только на соседнюю клетку!", true);
+            addLog("❌ Можно ходить только на соседние клетки!", true);
             return;
         }
         let cell = mapData[x][y];
         if(cell.type === 'enemy' && !cell.visited) {
             currentEnemy = { ...cell.enemy, hp: cell.enemy.hp };
-            addLog(`⚔️ Вы встретили ${currentEnemy.name}! Сражайтесь!`);
-            renderBattle();
+            addLog(`⚔️ ВАС АТАКУЕТ: ${currentEnemy.name} — ${currentEnemy.desc || "Опасный противник"}`);
+            updateBattleUI();
             return;
         }
-        if(cell.type === 'chest' && !cell.visited) {
-            if(cell.weapon && !cell.weapon.found) {
-                cell.weapon.found = true;
-                player.weaponsFound.push(cell.weapon);
-                player.weapon = cell.weapon;
-                player.strength += cell.weapon.damageBonus;
-                addLog(`🎁 Вы нашли ${cell.weapon.name}! +${cell.weapon.damageBonus} к силе!`);
-                updateStatsUI();
-                renderWeapons();
-            } else {
-                addLog(`🎁 Сундук пуст...`);
-            }
-            cell.type = 'empty';
-            cell.visited = true;
-            currentPos = {x,y};
-            renderMap();
-            return;
-        }
-        if(cell.visited || cell.type === 'empty') {
-            cell.visited = true;
-            currentPos = {x,y};
-            renderMap();
-            addLog(`🚶 Вы переместились на (${x+1},${y+1})`);
-            return;
-        }
-    }
-
-    function renderBattle() {
-        if(!currentEnemy) return;
-        document.getElementById('enemySprite').innerHTML = currentEnemy.sprite || '👾';
-        document.getElementById('enemyName').innerHTML = currentEnemy.name;
-        let hpPercent = (currentEnemy.hp / currentEnemy.maxHp) * 100;
-        document.getElementById('enemyHealthFill').style.width = `${hpPercent}%`;
-        document.getElementById('enemyHpText').innerHTML = `${Math.floor(currentEnemy.hp)}/${currentEnemy.maxHp}`;
-    }
-
-    function attack() {
-        if(!currentEnemy) { addLog("Нет врага!", true); return; }
-        let damage = Math.floor(player.strength + Math.random() * 12 + (player.weapon?.damageBonus || 0));
-        let isCrit = Math.random() < 0.15 + player.dexterity/100;
-        if(isCrit) damage = Math.floor(damage * 1.7);
-        
-        animateAttack();
-        currentEnemy.hp -= damage;
-        addLog(`⚔️ Вы нанесли ${damage} урона ${currentEnemy.name}! ${isCrit ? 'КРИТ!' : ''}`);
-        if(currentEnemy.hp <= 0) {
-            addLog(`🏆 Победа! +${currentEnemy.exp} опыта`);
-            let cell = mapData[currentPos.x][currentPos.y];
-            cell.type = 'empty';
-            cell.visited = true;
-            currentEnemy = null;
-            renderMap();
+        if(cell.type === 'chest' && !cell.visited && cell.weapon && !cell.weapon.found) {
+            cell.weapon.found = true;
+            player.weaponsFound.push(cell.weapon);
+            player.weapon = cell.weapon;
+            player.str += cell.weapon.bonus;
+            addLog(`🎁 ВЫ НАШЛИ: ${cell.weapon.name}! ${cell.weapon.desc}`, false);
             updateStatsUI();
-            return;
+            renderWeapons();
+            cell.type = 'empty';
+        } else if(cell.type === 'chest') {
+            addLog(`🎁 Сундук пуст...`);
+            cell.type = 'empty';
         }
-        enemyAttack();
-        renderBattle();
+        cell.visited = true;
+        currentPos = {x,y};
+        renderMap();
+        addLog(`🚶 Вы переместились в сектор (${x+1},${y+1})`);
+        if(cell.type !== 'enemy') currentEnemy = null;
+        updateBattleUI();
+    }
+
+    function updateBattleUI() {
+        if(currentEnemy) {
+            document.getElementById('enemySprite').innerHTML = currentEnemy.sprite;
+            document.getElementById('enemyName').innerHTML = currentEnemy.name;
+            let percent = (currentEnemy.hp / currentEnemy.maxHp) * 100;
+            document.getElementById('enemyHealthFill').style.width = `${percent}%`;
+            document.getElementById('enemyHpText').innerHTML = `${Math.floor(currentEnemy.hp)}/${currentEnemy.maxHp}`;
+            document.getElementById('enemyCard').style.display = 'block';
+        } else {
+            document.getElementById('enemyCard').style.display = 'none';
+        }
         updateStatsUI();
     }
 
-    function enemyAttack() {
-        let dmg = Math.max(3, currentEnemy.damage + Math.floor(Math.random() * 8) - 3);
-        player.hp -= dmg;
-        addLog(`💢 ${currentEnemy.name} атакует и наносит ${dmg} урона!`);
+    function attack() {
+        if(!currentEnemy) { addLog("❌ Нет врага для атаки!", true); return; }
+        let damage = Math.floor(player.str + Math.random() * 15 + (player.weapon?.bonus || 0));
+        let isCrit = Math.random() < 0.1 + player.dex/100;
+        if(isCrit) damage = Math.floor(damage * 1.8);
+        animateAttack();
+        currentEnemy.hp -= damage;
+        addLog(`⚔️ ${player.classData.name} наносит ${damage} урона ${currentEnemy.name}! ${isCrit ? 'КРИТИЧЕСКИЙ УДАР!' : ''}`);
+        
+        if(currentEnemy.hp <= 0) {
+            addLog(`🏆 ПОБЕДА! +${currentEnemy.exp} опыта, враг повержен!`);
+            // Враг исчезает с карты
+            let cell = mapData[currentPos.x][currentPos.y];
+            cell.type = 'empty';
+            cell.visited = true;
+            cell.enemy = null;
+            currentEnemy = null;
+            renderMap();
+            updateBattleUI();
+            return;
+        }
+        enemyTurn();
+        updateBattleUI();
+    }
+
+    function useSkill() {
+        if(!currentEnemy) { addLog("❌ Нет цели!", true); return; }
+        let skill = player.classData;
+        if(player.mana < skill.skillCost) { addLog(`❌ Не хватает ${skill.skillCost} маны!`, true); return; }
+        player.mana -= skill.skillCost;
+        let damage = skill.skillDmg(player);
+        
+        if(player.classId === 'mage') showSpellEffect('🔥', 100);
+        if(player.classId === 'summoner') {
+            if(!player.summonActive) {
+                player.summonActive = true;
+                player.summonPower = Math.floor(player.int * 1.5 + 15);
+                showSummon();
+                addLog(`🐉 ВЫ ПРИЗВАЛИ ДУХА ДРЕВНЕГО! +${player.summonPower} урона каждый ход`);
+                damage += player.summonPower;
+            } else {
+                damage += player.summonPower;
+                addLog(`🐲 Дух атакует вместе с вами! +${player.summonPower} урона`);
+            }
+        }
+        
+        addLog(`✨ ${skill.skill} наносит ${damage} магического урона!`);
+        currentEnemy.hp -= damage;
+        
+        if(currentEnemy.hp <= 0) {
+            addLog(`🏆 ПОБЕДА! +${currentEnemy.exp} опыта, враг исчез!`);
+            let cell = mapData[currentPos.x][currentPos.y];
+            cell.type = 'empty';
+            cell.visited = true;
+            cell.enemy = null;
+            currentEnemy = null;
+            renderMap();
+            updateBattleUI();
+            return;
+        }
+        enemyTurn();
+        updateBattleUI();
+    }
+
+    function heal() {
+        if(player.mana < 20) { addLog("❌ Не хватает 20 маны!", true); return; }
+        player.mana -= 20;
+        let healAmt = Math.floor(player.maxHp * 0.35);
+        player.hp = Math.min(player.maxHp, player.hp + healAmt);
+        addLog(`💚 СВЯТОЕ СЛОВО восстанавливает ${healAmt} HP!`);
+        if(currentEnemy) enemyTurn();
+        updateStatsUI();
+    }
+
+    function enemyTurn() {
+        if(!currentEnemy) return;
+        let dmg = Math.max(5, currentEnemy.dmg + Math.floor(Math.random() * 12) - 5);
+        player.hp = Math.max(0, player.hp - dmg);
+        addLog(`💢 ${currentEnemy.name} атакует и наносит ${dmg} урона!`, true);
         if(player.hp <= 0) {
-            addLog(`💀 ВЫ ПОВЕРЖЕНЫ... Обновите страницу чтобы начать заново 💀`, true);
+            addLog(`💀 ВЫ ПАЛИ В БОЮ... Обновите страницу для возрождения 💀`, true);
             disableButtons(true);
         }
         updateStatsUI();
     }
 
-    function useSkill() {
-        if(!currentEnemy) { addLog("Нет цели!", true); return; }
-        let classSkill = CLASSES[player.class];
-        let manaCost = 20;
-        if(player.mana < manaCost) { addLog(`❌ Не хватает ${manaCost} маны!`, true); return; }
-        player.mana -= manaCost;
-        let damage = classSkill.skillDamage(player);
-        
-        if(player.class === 'mage') {
-            showMagicBall();
-            damage += Math.floor(player.intellect * 0.8);
-        }
-        if(player.class === 'summoner') {
-            if(!summonActive) {
-                summonActive = true;
-                summonDamage = Math.floor(player.intellect * 1.2 + 8);
-                addLog(`🐉 Вы призвали духа! Он будет атаковать каждый ход!`);
-                showSummon();
-            } else {
-                damage += summonDamage;
-                addLog(`🐺 Дух атакует вместе с вами! +${summonDamage} урона`);
-            }
-        }
-        
-        addLog(`✨ ${classSkill.name} наносит ${damage} урона!`);
-        currentEnemy.hp -= damage;
-        if(currentEnemy.hp <= 0) {
-            addLog(`🏆 Победа!`);
-            let cell = mapData[currentPos.x][currentPos.y];
-            cell.type = 'empty';
-            currentEnemy = null;
-            renderMap();
-        } else {
-            enemyAttack();
-        }
-        renderBattle();
-        updateStatsUI();
-    }
-
-    function heal() {
-        if(player.mana < 15) { addLog("❌ Не хватает маны!", true); return; }
-        player.mana -= 15;
-        let healAmount = Math.floor(player.maxHp * 0.3);
-        player.hp = Math.min(player.maxHp, player.hp + healAmount);
-        addLog(`💚 Вы восстановили ${healAmount} HP`);
-        if(currentEnemy) enemyAttack();
-        updateStatsUI();
-    }
-
     function animateAttack() {
-        let playerSprite = document.getElementById('playerSprite');
-        playerSprite.classList.add('attacking');
-        setTimeout(() => playerSprite.classList.remove('attacking'), 300);
+        let sprite = document.getElementById('playerSprite');
+        sprite.classList.add('attacking');
+        setTimeout(() => sprite.classList.remove('attacking'), 300);
+        let enemySprite = document.getElementById('enemySprite');
+        if(enemySprite) enemySprite.classList.add('enemy-hit');
+        setTimeout(() => enemySprite?.classList.remove('enemy-hit'), 300);
     }
 
-    function showMagicBall() {
-        let arena = document.querySelector('.battle-arena');
-        let ball = document.createElement('div');
-        ball.className = 'magic-ball';
-        ball.innerHTML = '🔥';
-        ball.style.left = '30%';
-        ball.style.top = '50%';
-        arena.appendChild(ball);
-        setTimeout(() => ball.remove(), 400);
+    function showSpellEffect(emoji, x) {
+        let effect = document.createElement('div');
+        effect.className = 'spell-effect';
+        effect.innerHTML = emoji;
+        effect.style.left = x + 'px';
+        effect.style.top = '300px';
+        document.body.appendChild(effect);
+        setTimeout(() => effect.remove(), 400);
     }
 
     function showSummon() {
-        let summonDiv = document.getElementById('summonArea');
-        summonDiv.innerHTML = '<div class="summon-sprite">🐉 Дух</div>';
+        let container = document.getElementById('summonContainer');
+        container.innerHTML = '<div class="summon-creature">🐉 ДУХ-ХРАНИТЕЛЬ</div>';
     }
 
     function updateStatsUI() {
-        document.getElementById('hpStat').innerHTML = Math.max(0, Math.floor(player.hp));
-        document.getElementById('maxHpStat').innerHTML = player.maxHp;
-        document.getElementById('manaStat').innerHTML = Math.floor(player.mana);
-        document.getElementById('maxManaStat').innerHTML = player.maxMana;
-        let totalDamage = player.strength + (player.weapon?.damageBonus || 0);
-        document.getElementById('damageStat').innerHTML = totalDamage;
-        document.getElementById('weaponName').innerHTML = player.weapon.name;
+        document.getElementById('hpVal').innerHTML = Math.max(0, Math.floor(player.hp));
+        document.getElementById('maxHpVal').innerHTML = player.maxHp;
+        document.getElementById('manaVal').innerHTML = Math.floor(player.mana);
+        document.getElementById('maxManaVal').innerHTML = player.maxMana;
+        document.getElementById('strVal').innerHTML = player.str;
+        document.getElementById('dexVal').innerHTML = player.dex;
+        document.getElementById('weaponName').innerHTML = player.weapon?.name || "Начальное оружие";
         let hpPercent = (player.hp / player.maxHp) * 100;
+        let manaPercent = (player.mana / player.maxMana) * 100;
         document.getElementById('playerHealthFill').style.width = `${hpPercent}%`;
+        document.getElementById('playerManaFill').style.width = `${manaPercent}%`;
+        document.getElementById('playerHealthFill').innerHTML = `${Math.floor(player.hp)}/${player.maxHp}`;
     }
 
     function renderWeapons() {
-        let inv = document.getElementById('weaponInventory');
-        inv.innerHTML = player.weaponsFound.map(w => `<div class="weapon-slot">⚔️ ${w.name} (+${w.damageBonus})</div>`).join('');
+        let div = document.getElementById('weaponInventory');
+        div.innerHTML = player.weaponsFound.map(w => `<span class="weapon-item">⚔️ ${w.name} +${w.bonus}</span>`).join('');
     }
 
     function addLog(msg, isError=false) {
-        let logDiv = document.getElementById('combatLog');
+        let log = document.getElementById('combatLog');
         let entry = document.createElement('div');
-        entry.style.color = isError ? '#ff8888' : '#aaffdd';
+        entry.className = 'log-entry';
+        entry.style.borderLeftColor = isError ? '#ff6666' : '#ffd700';
         entry.innerHTML = `➤ ${msg}`;
-        logDiv.appendChild(entry);
+        log.appendChild(entry);
         entry.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        if(log.children.length > 30) log.removeChild(log.children[0]);
     }
 
     function disableButtons(disabled) {
-        document.getElementById('attackBtn').disabled = disabled;
-        document.getElementById('skillBtn').disabled = disabled;
-        document.getElementById('healBtn').disabled = disabled;
+        ['attackBtn','skillBtn','healBtn'].forEach(id => {
+            document.getElementById(id).disabled = disabled;
+        });
     }
 
-    function initGame(className) {
-        currentClass = className;
-        player.class = className;
-        player.classData = CLASSES[className];
-        
+    function initGame(classId) {
+        player.classId = classId;
+        player.classData = CLASSES[classId];
         player.maxHp = player.classData.hp;
         player.hp = player.maxHp;
         player.maxMana = player.classData.mana;
         player.mana = player.maxMana;
-        player.strength = player.classData.str;
-        player.intellect = player.classData.int;
-        player.dexterity = player.classData.dex;
-        player.weapon = { name: "Начальное оружие", damageBonus: 0 };
+        player.str = player.classData.str;
+        player.int = player.classData.int;
+        player.dex = player.classData.dex;
+        player.weapon = null;
         player.weaponsFound = [];
-        summonActive = false;
+        player.summonActive = false;
         
         document.getElementById('playerSprite').innerHTML = player.classData.sprite;
-        document.getElementById('playerName').innerHTML = player.classData.name;
+        document.getElementById('playerClassName').innerHTML = player.classData.name;
+        document.getElementById('skillBtn').innerHTML = `✨ ${player.classData.skill} (${player.classData.skillCost} маны)`;
         
         mapData = generateMap();
         currentPos = { x: 2, y: 2 };
@@ -684,17 +820,17 @@
         renderMap();
         updateStatsUI();
         renderWeapons();
-        addLog(`✨ Вы выбрали ${player.classData.name}! Исследуйте подземелье!`);
+        addLog(`✨ ВЫ СТАЛИ ${player.classData.name}! ИССЛЕДУЙТЕ ПОДЗЕМЕЛЬЕ!`);
         disableButtons(false);
     }
 
-    // ВЫБОР КЛАССА
+    // Обработчики выбора класса
     document.querySelectorAll('.class-card').forEach(card => {
         card.addEventListener('click', () => {
-            let selectedClass = card.dataset.class;
+            let classId = card.dataset.class;
             document.getElementById('classScreen').style.display = 'none';
             document.getElementById('gameContainer').style.display = 'block';
-            initGame(selectedClass);
+            initGame(classId);
         });
     });
 
